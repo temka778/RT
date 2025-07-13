@@ -21,4 +21,3 @@ def send_task_to_queue(task_id, equipment_id, parameters):
         properties=pika.BasicProperties(delivery_mode=2)
     )
     connection.close()
-

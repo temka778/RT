@@ -2,3 +2,4 @@ flask
 pika
 uuid
 requests
+pytest

@@ -1,0 +1,24 @@
+@startuml
+actor User
+participant "Frontend Service B" as B
+participant "RabbitMQ" as RMQ
+participant "Worker" as W
+participant "Service A" as A
+participant "Database" as DB
+
+User -> B: POST /api/v1/equipment/cpe/{id}
+B -> DB: Save task (task_id, equipment_id, parameters, status="running")
+B -> RMQ: Publish task to task_dispatcher
+B --> User: {code: 200, taskId: task_id}
+
+W -> RMQ: Consume task from task_dispatcher
+W -> A: POST /api/v1/equipment/cpe/{id}
+A --> W: {code: 200, message: "success"} (after 60s)
+W -> DB: Update task status (completed/failed)
+W -> RMQ: Publish result to task_results
+
+User -> B: GET /api/v1/equipment/cpe/{id}/task/{task_id}
+B -> DB: Get task status
+B --> User: {code: 200/204, message: "..."}
+
+@enduml

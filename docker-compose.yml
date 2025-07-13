@@ -29,6 +29,7 @@ services:
       - "5002:5002"
     volumes:
       - ./async-service/cert:/app/cert
+      - ./async-service/data:/app/data
     networks:
       - backend
     depends_on:
@@ -41,6 +42,7 @@ services:
     command: ["python", "worker.py"]
     volumes:
       - ./async-service/cert:/app/cert
+      - ./async-service/data:/app/data
     networks:
       - backend
     depends_on:
