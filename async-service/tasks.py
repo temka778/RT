@@ -1,7 +1,8 @@
 import pika
 import json
 
-RABBIT_URL = "amqp://guest:guest@rabbitmq/"
+RABBIT_URL = "amqp://guest:guest@rabbitmq/" # для Docker Compose
+# RABBIT_URL = "amqp://guest:guest@localhost/" # без Docker Compose
 
 def send_task_to_queue(task_id, equipment_id, parameters):
     connection = pika.BlockingConnection(pika.URLParameters(RABBIT_URL))

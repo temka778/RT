@@ -56,3 +56,16 @@ def get_task(task_id):
     result = c.fetchone()
     conn.close()
     return result[0] if result else None
+
+def get_task_info(task_id):
+    conn = connect_with_retry()
+    c = conn.cursor()
+    c.execute('SELECT equipment_id, status FROM tasks WHERE task_id = ?', (task_id,))
+    result = c.fetchone()
+    conn.close()
+    if result:
+        return {
+            "equipment_id": result[0],
+            "status": result[1]
+        }
+    return None

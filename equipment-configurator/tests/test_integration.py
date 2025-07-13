@@ -22,7 +22,7 @@ def test_configure_equipment_success(client):
     response = client.post(f"{BASE_URL}/api/v1/equipment/cpe/ABC12345", json=payload, verify=False)
     assert response.status_code == 200
     assert response.json() == {"code": 200, "message": "success"}
-    assert time.time() - start_time >= 60  # Проверка задержки
+    assert time.time() - start_time >= 60
 
 def test_configure_equipment_invalid_id(client):
     response = client.post(f"{BASE_URL}/api/v1/equipment/cpe/123", json={}, verify=False)

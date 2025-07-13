@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, make_response
 import re
 import uuid
 import json
-from db import init_db, create_task, get_task
+from db import init_db, create_task, get_task_info
 from tasks import send_task_to_queue
 
 app = Flask(__name__)
@@ -40,17 +40,20 @@ def get_task_status(equipment_id, task_id):
         return jsonify({"code": 404, "message": "The requested equipment is not found"}), 404
 
     try:
-        status = get_task(task_id)
-        if not status:
+        task = get_task_info(task_id)
+        if not task:
             return jsonify({"code": 404, "message": "The requested task is not found"}), 404
 
-        if status == "completed":
+        if task["equipment_id"] != equipment_id:
+            return jsonify({"code": 404, "message": "The requested task is not found"}), 404
+
+        if task["status"] == "completed":
             return jsonify({"code": 200, "message": "Completed"}), 200
         else:
-            response = make_response(json.dumps({"code": 204, "message": "Task is still running"}), 204)
-            response.headers['Content-Type'] = 'application/json'
-            return response
+            return jsonify({"code": 204, "message": "Task is still running"}), 200
+
     except Exception as e:
+        print(f"[!] Ошибка при получении статуса задачи: {e}")
         return jsonify({"code": 500, "message": "Internal provisioning exception"}), 500
 
 if __name__ == "__main__":

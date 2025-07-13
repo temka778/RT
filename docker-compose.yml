@@ -1,53 +1,42 @@
 services:
   rabbitmq:
     image: rabbitmq:3-management
+    container_name: rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
-    networks:
-      - backend
 
   equipment-configurator:
-    build:
-      context: ./equipment-configurator
+    build: ./equipment-configurator
     ports:
       - "5001:5001"
     volumes:
       - ./equipment-configurator/cert:/app/cert
-    networks:
-      - backend
     depends_on:
       - rabbitmq
 
   async-service:
-    build:
-      context: ./async-service
+    build: ./async-service
     ports:
       - "5002:5002"
     volumes:
-      - ./async-service/cert:/app/cert
-      - ./async-service/data:/app/data
-    networks:
-      - backend
+      - ./async-service:/app
     depends_on:
       - rabbitmq
       - equipment-configurator
+    environment:
+      - PYTHONUNBUFFERED=1
 
   worker:
-    build:
-      context: ./async-service
-    command: ["python", "worker.py"]
+    build: ./async-service
     volumes:
-      - ./async-service/cert:/app/cert
-      - ./async-service/data:/app/data
-    networks:
-      - backend
+      - ./async-service:/app
     depends_on:
       - rabbitmq
       - equipment-configurator
-
-networks:
-  backend:
+    command: ["python", "worker.py"]
+    environment:
+      - PYTHONUNBUFFERED=1

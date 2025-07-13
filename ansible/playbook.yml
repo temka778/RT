@@ -1,0 +1,27 @@
+- name: Deploy RT project
+  hosts: remote
+  become: yes
+  tasks:
+    - name: Установить Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Установить Docker Compose plugin
+      apt:
+        name: docker-compose-plugin
+        state: present
+
+    - name: Скопировать проект в /opt
+      copy:
+        src: "{{ playbook_dir }}/../"
+        dest: /opt/rt_project
+        owner: ubuntu
+        group: ubuntu
+        mode: 0755
+
+    - name: Запустить docker compose
+      shell: |
+        cd /opt/rt_project
+        docker compose up -d

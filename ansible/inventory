@@ -1,0 +1,2 @@
+[remote]
+your_server_ip ansible_user=ubuntu

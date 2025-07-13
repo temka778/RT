@@ -7,7 +7,8 @@ import requests
 import time
 from db import update_task_status
 
-RABBIT_URL = "amqp://guest:guest@rabbitmq/"
+RABBIT_URL = "amqp://guest:guest@rabbitmq/" # для Docker Compose
+# RABBIT_URL = "amqp://guest:guest@localhost/" # без Docker Compose
 QUEUE_NAME = "task_dispatcher"
 RESULT_QUEUE = "task_results"
 
@@ -47,7 +48,8 @@ def callback(ch, method, properties, body):
         for attempt in range(3):
             try:
                 response = requests.post(
-                    f"https://equipment-configurator:5001/api/v1/equipment/cpe/{equipment_id}",
+                  #  f"https://localhost:5001/api/v1/equipment/cpe/{equipment_id}", # без Docker Compose
+                    f"https://equipment-configurator:5001/api/v1/equipment/cpe/{equipment_id}", # для Docker Compose
                     json={"timeoutInSeconds": 14, "parameters": parameters},
                     timeout=62,
                     verify=False

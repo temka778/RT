@@ -36,7 +36,7 @@ def test_get_task_status_running(client):
     response = client.post(f"{BASE_URL}/api/v1/equipment/cpe/ABC12345", json=payload, verify=False)
     task_id = response.json()["taskId"]
     response = client.get(f"{BASE_URL}/api/v1/equipment/cpe/ABC12345/task/{task_id}", verify=False)
-    assert response.status_code == 204
+    assert response.status_code == 200
     assert response.json() == {"code": 204, "message": "Task is still running"}
 
 def test_get_task_status_not_found(client):

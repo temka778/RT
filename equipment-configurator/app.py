@@ -7,7 +7,7 @@ app = Flask(__name__)
 ID_PATTERN = re.compile(r"^[a-zA-Z0-9]{6,}$")
 
 async def simulate_provisioning():
-    await asyncio.sleep(60)
+    await asyncio.sleep(10) # Пускай пока что только 10 секунд ждёт
     return {"code": 200, "message": "success"}
 
 def run_async(coroutine):
@@ -22,7 +22,7 @@ def configure_equipment(equipment_id):
 
     try:
         data = request.get_json()
-        timeout = data.get("timeoutInSeconds", 10)
+        timeout = data.get("timeoutInSeconds", 60)
         parameters = data.get("parameters", {})
 
         if not parameters.get("username") or not parameters.get("password"):
